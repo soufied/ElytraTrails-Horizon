@@ -18,7 +18,7 @@ Lines stream from the outer tip of each wing while you glide and fade out over t
 - Formation: gliding players close to each other are joined by white lines between their wingtips.
 - Lines taper toward the tail, the wingtip has a soft glow, and fading eases in and out.
 - Singleplayer: without LAN or a server, all code for other players is skipped.
-- Sharing: your color and pattern are sent through the server, so other players see them (single player, LAN and servers).
+- Sharing: your color and pattern are sent through the server, so other players see them (single player, LAN and servers). (Untested, I don't have friends)
 
 ## Settings
 
