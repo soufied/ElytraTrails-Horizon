@@ -1,110 +1,94 @@
 [mod]
 id = "elytratrails"
-version = "0.1.0"
-priority = 200
+version = "0.1.1"
 
 [compatibility]
 horizon_revision = "02c8607ee8ebd216f2f535c1eb7b62b572830df2"
 
 [[module]]
-id = "runtime"
-file = "crates/horizon-client-render/src/gfx/native_render.rs"
-name = "elytratrails"
-source = "runtime.rs"
-visibility = "pub"
-
-[[module]]
-id = "pass"
-file = "crates/horizon-client-render/src/gfx/native_render.rs"
-name = "elytratrails_pass"
-source = "pass.rs"
-
-[[module]]
-id = "settings"
+id = "core"
 file = "crates/horizon-client/src/game.rs"
-name = "official_elytratrails_settings"
-source = "settings.rs"
+name = "official_elytratrails"
+source = "core.rs"
+
+[[module]]
+id = "trail"
+file = "crates/horizon-client/src/game.rs"
+name = "official_elytratrails_trail"
+source = "trail.rs"
+
+[[module]]
+id = "net"
+file = "crates/horizon-client/src/game.rs"
+name = "official_elytratrails_net"
+source = "net.rs"
+
+[[module]]
+id = "page"
+file = "crates/horizon-client/src/game.rs"
+name = "official_elytratrails_page"
+source = "page.rs"
 
 [[injection]]
-id = "record"
-kind = "HEAD"
-target = "horizon_client::game::native_mob_draw::Game<'_>::mod_mob_layer_geometry"
-helper = "record.rs"
-bindings = [
-  { name = "game", ty = "&crate::game::Game<'_>", value = "self" },
-  { name = "mob", ty = "&crate::mobs::Mob", value = "mob" },
-  { name = "partial", ty = "f32", value = "partial" },
-  { name = "who", ty = "&Option<crate::game::native_mob_draw::NativePlayerRender<'_>>", value = "&who" },
-]
-
-[[injection]]
-id = "listen"
-kind = "HEAD"
-hook = "player_render_listened"
+id = "list"
+hook = "mods"
 hook_version = 1
-helper = "listen.rs"
+kind = "HEAD"
+helper = "list.rs"
 bindings = [
-  { name = "listened", ty = "&mut bool", value = "&mut *listened" },
+  { name = "mods", ty = "&mut Vec<crate::game::native_hooks::NativeMod>", value = "&mut *mods" },
 ]
 
 [[injection]]
-id = "world"
-kind = "HEAD"
-hook = "world_drawn"
+id = "settings"
+hook = "settings"
 hook_version = 1
-helper = "world.rs"
+kind = "HEAD"
+helper = "settings.rs"
 bindings = [
-  { name = "world", ty = "&mut crate::gfx::native_render::WorldDrawn<'_>", value = "&mut *world" },
+  { name = "game", ty = "&mut crate::game::Game<'_>", value = "&mut *self" },
+  { name = "mod_id", ty = "&str", value = "mod_id" },
+  { name = "buttons", ty = "&mut Vec<String>", value = "&mut *buttons" },
 ]
 
 [[injection]]
-id = "needs"
-kind = "HEAD"
-hook = "render_needs"
+id = "click"
+hook = "settings_click"
 hook_version = 1
-helper = "needs.rs"
+kind = "HEAD"
+helper = "click.rs"
 bindings = [
-  { name = "needs", ty = "&mut crate::gfx::native_render::RenderNeeds", value = "&mut *needs" },
+  { name = "game", ty = "&mut crate::game::Game<'_>", value = "&mut *self" },
+  { name = "mod_id", ty = "&str", value = "mod_id" },
+  { name = "button", ty = "usize", value = "button" },
 ]
 
 [[injection]]
-id = "sync-tick"
-kind = "HEAD"
+id = "tick"
 hook = "tick"
 hook_version = 1
+kind = "HEAD"
 helper = "tick.rs"
 bindings = [
   { name = "game", ty = "&mut crate::game::Game<'_>", value = "&mut *self" },
 ]
 
 [[injection]]
-id = "sync-joined"
+id = "lines"
+target = "horizon_client::game::native_visuals::Game<'_>::native_frame_visuals"
 kind = "HEAD"
-hook = "player_logged_in"
-hook_version = 1
-helper = "player_join.rs"
+helper = "lines.rs"
 bindings = [
-  { name = "game", ty = "&mut crate::game::Game<'_>", value = "&mut *self" },
-  { name = "player", ty = "u128", value = "player" },
-  { name = "name", ty = "&str", value = "name" },
+  { name = "game", ty = "&crate::game::Game<'_>", value = "self" },
+  { name = "alpha", ty = "f64", value = "alpha" },
+  { name = "lines", ty = "&mut Vec<horizon_client::gizmos::Line>", value = "&mut *lines" },
 ]
 
 [[injection]]
-id = "sync-left"
-kind = "HEAD"
-hook = "player_logged_out"
-hook_version = 1
-helper = "player_leave.rs"
-bindings = [
-  { name = "player", ty = "u128", value = "player" },
-  { name = "_name", ty = "&str", value = "name" },
-]
-
-[[injection]]
-id = "sync-from-client"
-kind = "HEAD"
+id = "net_from_client"
 hook = "net_from_client"
 hook_version = 1
+kind = "HEAD"
 helper = "net_from_client.rs"
 bindings = [
   { name = "game", ty = "&mut crate::game::Game<'_>", value = "&mut *self" },
@@ -114,44 +98,23 @@ bindings = [
 ]
 
 [[injection]]
-id = "sync-from-server"
-kind = "HEAD"
+id = "net_from_server"
 hook = "net_from_server"
 hook_version = 1
+kind = "HEAD"
 helper = "net_from_server.rs"
 bindings = [
-  { name = "_game", ty = "&mut crate::game::Game<'_>", value = "&mut *self" },
+  { name = "game", ty = "&mut crate::game::Game<'_>", value = "&mut *self" },
   { name = "channel", ty = "&str", value = "channel" },
   { name = "data", ty = "&[u8]", value = "data" },
 ]
 
 [[injection]]
-id = "list"
+id = "server_tick"
+hook = "server_tick"
+hook_version = 1
 kind = "HEAD"
-target = "horizon_client::game::native_hooks::Game<'_>::native_mods"
-helper = "list.rs"
-bindings = [
-  { name = "mods", ty = "&mut Vec<crate::game::native_hooks::NativeMod>", value = "&mut *mods" },
-]
-
-[[injection]]
-id = "settings-page"
-kind = "HEAD"
-target = "horizon_client::game::native_hooks::Game<'_>::native_settings"
-helper = "settings_page.rs"
+helper = "server_tick.rs"
 bindings = [
   { name = "game", ty = "&mut crate::game::Game<'_>", value = "&mut *self" },
-  { name = "mod_id", ty = "&str", value = "mod_id" },
-  { name = "buttons", ty = "&mut Vec<String>", value = "&mut *buttons" },
-]
-
-[[injection]]
-id = "settings-click"
-kind = "HEAD"
-target = "horizon_client::game::native_hooks::Game<'_>::native_settings_click"
-helper = "settings_click.rs"
-bindings = [
-  { name = "game", ty = "&mut crate::game::Game<'_>", value = "&mut *self" },
-  { name = "mod_id", ty = "&str", value = "mod_id" },
-  { name = "button", ty = "usize", value = "button" },
 ]
