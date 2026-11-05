@@ -3,7 +3,7 @@ use std::sync::{Mutex, PoisonError};
 
 pub const ID: &str = "elytratrails";
 pub const NAME: &str = "ElytraTrails";
-pub const VERSION: &str = "0.1.1";
+pub const VERSION: &str = "0.1.2";
 pub const DESCRIPTION: &str = "Lines from the wingtips of gliding elytra that fade out over time, shared with other players.";
 
 pub const KEYS: [&str; 16] = [

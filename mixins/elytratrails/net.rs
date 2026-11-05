@@ -1,4 +1,4 @@
-use std::collections::HashMap;
+use std::collections::{HashMap, HashSet};
 use std::sync::{Mutex, PoisonError};
 
 use crate::game::Game;
@@ -90,6 +90,16 @@ impl Game<'_> {
     }
 
     pub(super) fn elytratrails_server_tick(&mut self) {
+        let own = self.elytratrails_own_uuid();
+        if let Some(host) = self.lan.as_ref() {
+            let present: HashSet<u128> = host.hub.guests.iter().map(|g| g.uuid).collect();
+            with_net(|net| {
+                let before = net.server.len();
+                net.server
+                    .retain(|uuid, _| *uuid == own || present.contains(uuid));
+                net.dirty |= net.server.len() != before;
+            });
+        }
         if !with_net(|net| std::mem::take(&mut net.dirty)) {
             return;
         }

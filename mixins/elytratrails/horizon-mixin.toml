@@ -1,6 +1,6 @@
 [mod]
 id = "elytratrails"
-version = "0.1.1"
+version = "0.1.2"
 
 [compatibility]
 horizon_revision = "02c8607ee8ebd216f2f535c1eb7b62b572830df2"
