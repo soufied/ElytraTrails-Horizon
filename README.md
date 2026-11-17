@@ -1,3 +1,5 @@
+This project is abandoned. I am no longer interested in it. You can do whatever you want with these mods, I do not care.
+
 # ElytraTrails (Horizon native mod)
 
 ![ElytraTrails icon](icons/elytratrails.png)
